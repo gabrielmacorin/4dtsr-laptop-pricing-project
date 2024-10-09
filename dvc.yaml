@@ -1,3 +1,35 @@
+stages:
+  obter_dados:
+    cmd: python -m src.data.get_data 4dtsr-files-gms dataset/laptopPrice.csv data/raw/laptopPrice.csv
+    deps:
+    - src/data/get_data.py
+    outs:
+    - data/raw/laptopPrice.csv
+
+  processar_dados:
+    cmd: python -m src.data.make_dataset data/raw/laptopPrice.csv data/processed/laptop-price.csv
+    deps:
+    - data/raw/laptopPrice.csv
+    - src/data/make_dataset.py
+    outs:
+    - data/processed/laptop-price.csv
+
+  processar_features:
+    cmd: python -m src.data.make_features data/processed/laptop-price.csv data/processed/laptop-price-features.csv
+    deps:
+    - data/processed/laptop-price.csv
+    - src/data/make_features.py
+    outs:
+    - data/processed/laptop-price-features.csv
+
+  treinamento:
+    cmd: python -m src.models.train_model data/processed/laptop-price-features.csv
+      models/model.pkl
+    deps:
+    - data/processed/laptop-price-features.csv
+    - src/models/train_model.py
+    outs:
+    - models/model.pkl
 metrics:
 - dvclive/metrics.json
 plots:
